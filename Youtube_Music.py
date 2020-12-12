@@ -38,9 +38,7 @@ def start():
             player.play()
             t1 = threading.Thread(target=insert)
             t1.start()
-            while s_duration > 0:
-                s_duration -=1
-                time.sleep(1)
+            time.sleep(s_duration)
             playlist.pop(0)
 
 start()
