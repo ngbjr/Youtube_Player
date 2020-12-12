@@ -1,6 +1,7 @@
 import threading, time, pafy, vlc, urllib.request, re
 
 playlist = []
+global_checker = 0
 
 def get_sec(time_str):
     h, m, s= time_str.split(':')
@@ -16,7 +17,8 @@ def youtube_search(search):
 
 
 def insert():
-    playlist.append(input("Search Music:"))
+    while True:
+        playlist.append(input("Search Music:"))
 
 def start():
     global playlist
@@ -24,19 +26,21 @@ def start():
     if len(playlist) == 0:
         playlist.append(input("Search Music:"))
         start()
-
-    for x in playlist:
-        music = youtube_search(x)
-        s_duration = get_sec(music.duration)
-        audio = music.getbestaudio()
-        audio_url = audio.url
-        player = vlc.MediaPlayer(audio_url)
-        player.audio_set_volume(40)
-        player.play()
-        while s_duration > 0:
-            s_duration -=1
+    
+    while True:
+        for x in playlist:
+            music = youtube_search(x)
+            s_duration = get_sec(music.duration)
+            audio = music.getbestaudio()
+            audio_url = audio.url
+            player = vlc.MediaPlayer(audio_url)
+            player.audio_set_volume(40)
+            player.play()
             t1 = threading.Thread(target=insert)
             t1.start()
-            time.sleep(1)
+            while s_duration > 0:
+                s_duration -=1
+                time.sleep(1)
+            playlist.pop(0)
 
 start()
